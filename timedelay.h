@@ -15,7 +15,7 @@
 #define LED1 LATBbits.LATB9   
 #define LED2 LATBbits.LATA6
 
-// for CN ISR in IO.c (it's a macro, so no function call in the ISR) 
+// for CN ISR in IO.c
 #define DEBOUNCE_START() 
   do { 
     TMR3 = 0; 
