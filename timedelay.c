@@ -4,7 +4,7 @@
  */
 #include "timedelay.h"
 
-#define PWM_PERIOD 4000   /* 4 MHz / 4000 = 1 kHz PWM, no flicker */
+#define PWM_PERIOD 4000   // (4 MHz / 4000 )= 1 kHz PWM, no flicker 
 
 //shared variable 
 volatile uint8_t  tick_flag     = 0;
@@ -91,18 +91,22 @@ void pwm_set(uint8_t led, uint8_t percent)
 
     if (percent == 0) {            // fully off: no timer needed 
         T2CONbits.TON = 0;
-        if (led == 1) LED1 = 0; else LED2 = 0;
+        if (led == 1) LED1 = 0;
+        else LED2 = 0;
     }
     else if (percent >= 100) {     //fully on: no timer needed 
         T2CONbits.TON = 0;
-        if (led == 1) LED1 = 1; else LED2 = 1;
+        if (led == 1) LED1 = 1;
+        else LED2 = 1;
     }
     else {
         on_time  = on;
         off_time = PWM_PERIOD - on;
         if (!T2CONbits.TON) {      //start PWM if not already running 
             pwm_high = 1;
-            if (led == 1) LED1 = 1; else LED2 = 1;
+            if (led == 1) LED1 = 1;
+            else LED2 = 1;
+            
             TMR2 = 0;
             PR2 = on_time - 1;
             T2CONbits.TON = 1;
@@ -131,11 +135,14 @@ void press_timer_start(void)
 
 void press_timer_stop(void)
 {
-    if (!press_running) return;    // release without a matching press: ignore 
+    if (!press_running) 
+        return;    // release without a matching press: ignore 
     press_running = 0;
 
-    if (press_count >= LONG_PRESS_TICKS) long_press_flag = 1;
-    else                                 short_press_flag = 1;
+    if (press_count >= LONG_PRESS_TICKS) 
+        long_press_flag = 1;
+    else
+        short_press_flag = 1;
 
     if (press_started_t1) {        // give T1 back to its previous (off) state 
         press_started_t1 = 0;
@@ -159,7 +166,8 @@ void timer_task(void)
             blink_on ^= 1;
         }
 
-        if (press_running && press_count < 0xFFFF) press_count++;
+        if (press_running && press_count < 0xFFFF) 
+            press_count++;
     }
 
     if (t3_event) {                          // debounce time is over 
@@ -192,10 +200,15 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void)
     if (pwm_high) {
         pwm_high = 0;
         PR2 = off_time - 1;
-        if (pwm_led == 1) LED1 = 0; else LED2 = 0;
+        if (pwm_led == 1) 
+            LED1 = 0; 
+        else LED2 = 0;
+        
     } else {
         pwm_high = 1;
         PR2 = on_time - 1;
-        if (pwm_led == 1) LED1 = 1; else LED2 = 1;
+        if (pwm_led == 1) 
+            LED1 = 1; 
+        else LED2 = 1;
     }
 }
